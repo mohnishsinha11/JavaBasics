@@ -1,0 +1,96 @@
+#ThreadGroup
+ -> based on functionality we can group threads into a single unit which is called as ThreadGroup. That is ThreadGroup contains a group of threads.
+ -> In addition to that ThreadGroup can also contain sub thread groups.
+ -> Examples of ThreadGroup all producer threads, all consumer threads.
+ -> Advantage is we can perform common operation easily.
+ -> Every thread in java belongs to some ThreadGroup and every thread is child group of system directly or indirectly.
+ -> ThreadGroup is a direct child of Object Class and present in java.lang package
+
+#java.util.concurrent package
+ -> problems with traditional synchronized keyword
+    1. we are not having any flexibility to try for a lock without waiting
+    2. there is no way to specify maximum waiting time for a thread to get lock so that thread will wait until getting the lock which may
+       create performance problem, which may cause deadlock
+    3. if a thread releases a lock then which waiting thread will get the lock, we are not having any control on this
+    4. there is no api to list out all waiting threads for a lock
+    5. synchronized keyword compulsory we have to use either at the method level or within a method, and it is not possible to use across
+       multiple methods
+
+    - To overcome these problems some people introduced java.util.concurrent.locks package from 1.5 version
+    - This package also provides several enhancements to the programmer to provide more control on concurrency.
+
+ #Lock interface
+ -> Lock object is similar to implicit lock acquired by a thread to execute synchronized method/block
+ -> Lock implementation provide more extensive operation than traditional implicit locks
+
+     - important methods of lock interface
+      1. void lock():
+        - we can use this method to acquire a lock, if lock is already available then immediately current thread will get the lock.
+        - if lock is not already available then it will wait until getting the lock.
+        - it is exactly same behaviour of traditional synchronized keyword.
+
+      2. boolean trylock():
+        - to acquire the lock without waiting
+        - if the lock is available then thread acquires that lock and returns true;
+        - if the lock is not available then this method returns false and can continue its execution without waiting. In this case
+          thread never will enter into waiting state.
+
+          ex.
+          if(l.trylock()){
+                perform safe operations
+          }
+          else{
+                perform alternative operations
+          }
+
+      3. boolean tryLock(long time, TimeUnit):
+        - if lock is available then thread with get the lock and continue its execution
+        - if the lock is not available then the thread will wait until specified amount of time,
+        - still if the lock is not available then thread can continue its execution
+
+        TimeUnit - TimeUnit is an enum present in java.lang.concurrent, contains enums as nanosecs, microsecs, millisecs, secs, mins, hours, days
+
+        ex.
+        if(l.tryLock(1000, TimeUnit.MILLISECONDS){
+
+        }
+
+       4. void lockInterruptibly():
+        - acquires the lock if it is available and return immediately
+        - if the lock is not available then it will wait
+        - while waiting if the thread is interrupted then thread won't get the lock
+
+       5. void unlock():
+        - to release the lock
+        - to call this method compulsory current thread should be owner of the lock otherwise we will get runtime exception saying
+          IllegalMonitorStateException
+
+#ReentrantLock
+ -> ReentrantLock is the implementation class for Lock interface, and it is a direct child class of Object
+ -> Reentrant means a thread can acquire same lock multiple times without any issue
+ -> internally, reentrant lock increments thread's personal count whenever thread calls lock() method and decrements internal count value
+    whenever thread calls unlock() method and lock will be released whenever count reaches zero
+
+    - Constructors
+        1. ReentrantLock l = new ReentrantLock();
+        2. ReentrantLock l = new ReentrantLock(boolean fairness);
+            - creates ReentrantLock lock with the given fairness policy
+            - if the fairness is true then longest waiting thread can acquire th lock if it is available,
+            - hence it follows the FCFS policy
+            - if fairness is false which waiting thread will get the chance we can't expect,
+            - the default value for the fairness is false
+
+    - Important methods of ReentrantLock
+        1. void lock()
+        2. boolean tryLock()
+        3. boolean tryLock(long, TimeUnit)
+        4. void lockInterruptibly()
+        5. void unlock()
+        6. int getHoldCount() - returns no. of hold on the lock by current thread
+        7. boolean isHeldByCurrentThread() - returns true if and only if lock is hold by current thread
+        8. int getQueueLength() - returns no. of threads waiting for the lock
+        9. Collection getQueuedThreads() - returns a collection of threads which are waiting to get the lock
+        10. boolean hasQueuedThreads() - returns true if any thread waiting to get the lock
+        11. boolean isLocked() - returns true if the lock is acquired by some thread
+        12. boolean isFair() - returns true if the fairness policy is set with true value
+        13. Thread getOwner() - returns the thread which acquires the lock
