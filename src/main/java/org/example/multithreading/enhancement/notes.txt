@@ -19,7 +19,7 @@
     - To overcome these problems some people introduced java.util.concurrent.locks package from 1.5 version
     - This package also provides several enhancements to the programmer to provide more control on concurrency.
 
- #Lock interface
+ *Lock interface
  -> Lock object is similar to implicit lock acquired by a thread to execute synchronized method/block
  -> Lock implementation provide more extensive operation than traditional implicit locks
 
@@ -65,7 +65,7 @@
         - to call this method compulsory current thread should be owner of the lock otherwise we will get runtime exception saying
           IllegalMonitorStateException
 
-#ReentrantLock
+ *ReentrantLock
  -> ReentrantLock is the implementation class for Lock interface, and it is a direct child class of Object
  -> Reentrant means a thread can acquire same lock multiple times without any issue
  -> internally, reentrant lock increments thread's personal count whenever thread calls lock() method and decrements internal count value
@@ -94,3 +94,67 @@
         11. boolean isLocked() - returns true if the lock is acquired by some thread
         12. boolean isFair() - returns true if the fairness policy is set with true value
         13. Thread getOwner() - returns the thread which acquires the lock
+
+#Thread Pools(Executor Framework)
+ -> creating a new thread for every job may create performance and memory problems, to overcome this we should go for ThreadPool.
+ -> ThreadPool is a pool of already created threads ready to do our job.
+ -> Java 1.5 version introduces ThreadPool framework to implements Thread Pools.
+ -> ThreadPool Framework also known as Executor Framework
+ -> We can create a ThreadPool as follows:
+        ExecutorService service = Executors.newFixedThreadPool(3);
+
+ -> We can submit a runnable job by using submit() method
+        service.submit(job);
+
+ -> We can shut down ExecutorService using shutdown() method
+        service.shutdown();
+
+    Note:
+        -> While designing web servers or application servers, we can use ThreadPool concept
+
+ *Callable and Future
+ -> In case of Runnable job, thread won't return anything after completing the job,
+ -> if a thread is required to return some result after execution, then we should go for callable
+ -> Callable interface contains only one method call()
+        public Object call() throws Exception
+ -> If we submit a callable object to executor then after completing the job thread returns an object of the type Future.
+ -> That is Future object can be used to retrieve the result from the callable job.
+
+#ThreadLocal
+ -> ThreadLocal class provides thread local variables
+ -> ThreadLocal class maintains values per thread basis
+ -> Each ThreadLocal object maintain a separate value, like userId, transactionId, etc. for each thread that access that object.
+ -> Thread can access its local value, can manipulate its value and even can remove its value.
+ -> In every part of the code which is executed by the thread, we can access its local variable.
+    Example - consider a Servlet which invokes some business method, we have a requirement to generate a unique transactionId for
+    each and every request, and we have to pass this transactionId to the business methods. For this requirement we can use ThreadLocal to
+    maintain a separate transactionId for every request i.e. for every thread.
+
+    Note -
+    - ThreadLocal class introduced in 1.2 version and enhanced in 1.5 version
+    - ThreadLocal can be associated with Thread scope
+    - Total code which is executed by thread has access to the corresponding thread local variables
+    - a thread can access its own local variables and can't access other thread's local variables
+    - once thread enter into dead state, all its local variables are by default eligible for Garbage Collection
+    - constructor ThreadLocal t1 = new ThreadLocal(), creates a ThreadLocal variable.
+    - methods:
+        1. Object get() - returns the value of the ThreadLocal variable associated with current Thread
+        2. Object initialValue() - returns initial value of ThreadLocal variable associated with current Thread
+                                 - the default implementation of this method return null
+                                 - to customize our own initial value we have to override this method
+        3. void set(Object newValue) - to set a new value
+        4. void remove() - to remove the value of Thread Local variable associated with current thread
+                         - this method is added in 1.5 version
+                         - after removal if we try to access it will reinitialize again by invoking its initialValue method()
+
+    ThreadLocal vs Inheritance
+    - Parent threads ThreadLocal variable by default not available to the child thread
+    - If we want to make parent thread's ThreadLocal value available to the child thread, then we should go for InheritableThreadLocalClass
+    - By default child thread value is exactly same as parent thread's value, but we can customize child thread's value by overriding
+      childValue() Method
+    - constructor : InheritableThreadLocal t1 = new InheritableThreadLocal();
+    - methods :
+          - InheritableThreadLocal is a child class of ThreadLocal and hence all methods present in ThreadLocal by default available to
+            InheritableThreadLocal
+          - In addition to these methods, it contains only one method:
+                public Object childValue(Object parentValue);
