@@ -1,0 +1,19 @@
+Difference between notify() and notifyAll()
+-> In case of notify() call if there are multiple threads which are in waiting state then only one thread will be notified and
+   the remaining threads have to wait for further notifications. Which thread will be notified, we cant expect, it depends on JVM.
+
+-> We can use notifyAll(), to give the notification to all the waiting thread on that object, even though multiple threads are notified
+   but execution will happen one by one because threads required lock and only one lock is available.
+
+What are Daemon threads?
+-> The threads which are executing in the background are called as Daemon threads, eg. Garbage Collector, Signal Dispatcher, Attach Listener.
+-> Purpose of daemon threads is to provide support for non daemon threads. For ex. if main thread runs with low memory then JVM
+   runs garbage collector to destroy useless objects. So that number of bytes of free memory will be improved. With free memory main
+   thread will continue its execution.
+-> Usually daemons threads have low priority but based on the requirements daemon threads can run with high priority also.
+-> By using isDaemon() method we can check whether thread is Daemon thread or not.
+-> We can change any thread to Daemon thread only before starting the thread otherwise we will get IllegalThreadStateException.
+   setDaemon(boolean b) is the method for changing the thread to Daemon.
+-> By default main thread is always non daemon and for all remaining thread s daemon nature will be inherited from parent to child.
+-> Once last non daemon thread is terminated all daemon threads are terminated automatically since damon thread is only their for
+   supporting the non daemons one.
