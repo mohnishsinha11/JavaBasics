@@ -2,7 +2,7 @@ package org.example.multithreading.enhancement.ThreadLocal;
 
 public class ThreadLocalDemo1A {
     public static void main(String[] args) {
-        ThreadLocal threadLocal = new ThreadLocal<>(){
+        ThreadLocal threadLocal = new ThreadLocal(){
             public Object initialValue(){
                 return "abc";
             }

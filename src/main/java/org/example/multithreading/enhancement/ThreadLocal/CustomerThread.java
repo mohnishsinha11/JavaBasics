@@ -2,7 +2,7 @@ package org.example.multithreading.enhancement.ThreadLocal;
 
 public class CustomerThread extends Thread{
     static Integer custId = 0;
-    private static ThreadLocal t1 = new ThreadLocal<>(){
+    private static ThreadLocal t1 = new ThreadLocal(){
         protected Integer initialValue() {
             return ++custId;
         }
